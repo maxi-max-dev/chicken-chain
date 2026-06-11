@@ -1,133 +1,377 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | ChickenChain</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChickenChain · 老鹰抓小鸡</title>
+  <style>
+    /* ── 基础重置 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1f2e;
+      color: #e8eaf0;
+      font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei",
+                   "Hiragino Sans GB", sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 40px;
+    }
+
+    /* ── 最外层容器居中 ── */
+    .page-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ── 标题区 ── */
+    .site-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .site-header h1 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #f5c842;
+      text-shadow: 0 2px 16px rgba(245,200,66,0.35);
+    }
+    .site-header .subtitle {
+      margin-top: 6px;
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      color: #9aa0b8;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── 移动端警告横幅 ── */
+    #mobile-warning {
+      display: none;
+      background: #c0392b;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    /* ── 游戏容器 ── */
+    #game-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto 24px;
+      background: #0d1117;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    /* 16:9 响应式 canvas */
+    #game-wrap::before {
+      content: "";
+      display: block;
+      padding-top: 56.25%; /* 9/16 */
+    }
+
+    #unity-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+    }
+
+    /* ── 加载进度条 ── */
+    #unity-loading-bar {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .loading-label {
+      font-size: 0.9rem;
+      color: #9aa0b8;
+      margin-bottom: 10px;
+      letter-spacing: 0.05em;
+    }
+    #unity-progress-bar-empty {
+      width: 100%;
+      height: 8px;
+      background: #2a3048;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    #unity-progress-bar-full {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #f5c842, #e67e22);
+      border-radius: 4px;
+      transition: width 0.2s ease;
+    }
+
+    /* ── 加载错误提示 ── */
+    #unity-error {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      background: #2d1515;
+      border: 1px solid #8b2020;
+      border-radius: 8px;
+      padding: 20px;
+      color: #f0a0a0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    #unity-error strong { display: block; margin-bottom: 8px; font-size: 1rem; color: #e05555; }
+
+    /* ── 全屏按钮区 ── */
+    .game-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 8px 12px;
+      background: #141824;
+    }
+    #fullscreen-btn {
+      background: #2a3048;
+      border: 1px solid #3d4a6a;
+      color: #c8ccdc;
+      font-size: 0.85rem;
+      font-family: inherit;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    #fullscreen-btn:hover { background: #3a4565; }
+
+    /* ── 教程区 ── */
+    .tutorial-section {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 620px) {
+      .tutorial-section { grid-template-columns: 1fr; }
+    }
+
+    .tutorial-card {
+      background: #212840;
+      border: 1px solid #2e3a58;
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+    .tutorial-card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f5c842;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tutorial-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .tutorial-card ul li {
+      font-size: 1rem;
+      color: #c8ccdc;
+      line-height: 1.7;
+      padding-left: 1.2em;
+      position: relative;
+    }
+    .tutorial-card ul li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: #f5c842;
+      font-weight: bold;
+    }
+    .tutorial-card .key-row {
+      font-size: 1rem;
+      color: #c8ccdc;
+      line-height: 1.9;
+    }
+    kbd {
+      display: inline-block;
+      background: #2e3a58;
+      border: 1px solid #4a5878;
+      border-radius: 5px;
+      padding: 1px 7px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      color: #e8eaf0;
+      line-height: 1.5;
+    }
+    .tip-note {
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #7a82a0;
+      line-height: 1.5;
+    }
+
+    /* ── 页脚 ── */
+    .site-footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 0.8rem;
+      color: #4a5068;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <!-- 标题 -->
+    <header class="site-header">
+      <h1>老鹰抓小鸡</h1>
+      <p class="subtitle">物理鸡链派对游戏 · 原型试玩</p>
+    </header>
+
+    <!-- 移动端警告（JS 检测后显示） -->
+    <div id="mobile-warning">
+      📵 本游戏需要键盘，请在电脑浏览器打开
+    </div>
+
+    <!-- 游戏画面 + 加载条 -->
+    <div id="game-wrap">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+
       <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
+        <div class="loading-label">加载中，请稍候…</div>
         <div id="unity-progress-bar-empty">
           <div id="unity-progress-bar-full"></div>
         </div>
       </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">ChickenChain</div>
+
+      <div id="unity-error">
+        <strong>加载失败</strong>
+        <span id="unity-error-msg"></span>
       </div>
     </div>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+    <!-- 全屏按钮 -->
+    <div style="max-width:960px; margin:0 auto;">
+      <div class="game-footer">
+        <button id="fullscreen-btn">⛶ 全屏</button>
+      </div>
+    </div>
+
+    <!-- 教程区 -->
+    <section class="tutorial-section">
+      <div class="tutorial-card">
+        <h2>🎮 怎么玩</h2>
+        <ul>
+          <li>你是<strong>老鹰（红色）</strong></li>
+          <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或方向键移动</li>
+          <li><kbd>空格</kbd> 扑击——<strong>只有扑击中碰到小鸡才算抓到</strong>，贴着蹭不算</li>
+          <li>90 秒内抓住 3 只 → 老鹰赢</li>
+          <li>鸡群守到时间结束 → 鸡群赢</li>
+        </ul>
+      </div>
+
+      <div class="tutorial-card">
+        <h2>⌨️ 按键</h2>
+        <div class="key-row"><kbd>R</kbd> 重开一局</div>
+        <div class="key-row"><kbd>Tab</kbd> 打开调参面板</div>
+        <p class="tip-note">
+          💡 小提示：先点一下游戏画面再按键——浏览器需要键盘焦点才能接收输入。
+        </p>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="site-footer">
+      版本 r5.2-202606112042 · Made with Unity
+    </footer>
+
+  </div><!-- /.page-wrap -->
+
+  <script>
+    // ── 移动端检测 ──
+    var isMobile = (function () {
+      var touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      var ua = /iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent);
+      return touch || ua;
+    })();
+    if (isMobile) {
+      document.getElementById('mobile-warning').style.display = 'block';
+    }
+
+    // ── Unity 配置 ──
+    // 版本号追加到所有资源 URL，每次发版缓存强制失效
+    var ver   = "r5.2-202606112042";
+    var build = "Build";
+    var loaderUrl = build + "/WebGL.loader.js?v=" + ver;
+
+    var config = {
+      arguments: [],
+      dataUrl:      build + "/WebGL.data.unityweb?v=" + ver,
+      frameworkUrl: build + "/WebGL.framework.js.unityweb?v=" + ver,
+      codeUrl:      build + "/WebGL.wasm.unityweb?v=" + ver,
+      streamingAssetsUrl: "StreamingAssets",
+      companyName:    "Max",
+      productName:    "ChickenChain",
+      productVersion: ver,
+      showBanner: function (msg, type) {
+        // 错误永久显示在错误区；警告短暂 console
+        if (type === 'error') {
+          var errBox = document.getElementById('unity-error');
+          document.getElementById('unity-error-msg').textContent = msg;
+          errBox.style.display = 'block';
+          document.getElementById('unity-loading-bar').style.display = 'none';
+        } else {
+          console.warn('[Unity banner]', msg);
         }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
+      },
+    };
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGL.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/WebGL.data.unityweb",
-        frameworkUrl: buildUrl + "/WebGL.framework.js.unityweb",
-        codeUrl: buildUrl + "/WebGL.wasm.unityweb",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Max",
-        productName: "ChickenChain",
-        productVersion: "1.0",
-        showBanner: unityShowBanner,
-        // errorHandler: function(err, url, line) {
-        //    alert("error " + err + " occurred at line " + line);
-        //    // Return 'true' if you handled this error and don't want Unity
-        //    // to process it further, 'false' otherwise.
-        //    return true;
-        // },
-      };
+    // ── 启动加载 ──
+    var loadingBar = document.getElementById('unity-loading-bar');
+    var progressBar = document.getElementById('unity-progress-bar-full');
+    loadingBar.style.display = 'block';
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-    </script>
-  </body>
+    var script = document.createElement('script');
+    script.src = loaderUrl;
+    script.onload = function () {
+      createUnityInstance(document.getElementById('unity-canvas'), config, function (progress) {
+        progressBar.style.width = (100 * progress) + '%';
+      }).then(function (unityInstance) {
+        loadingBar.style.display = 'none';
+        document.getElementById('fullscreen-btn').onclick = function () {
+          unityInstance.SetFullscreen(1);
+        };
+      }).catch(function (message) {
+        // 加载失败：显示在页面上，不弹 alert
+        loadingBar.style.display = 'none';
+        var errBox = document.getElementById('unity-error');
+        document.getElementById('unity-error-msg').textContent = message;
+        errBox.style.display = 'block';
+        console.error('[Unity load error]', message);
+      });
+    };
+    script.onerror = function () {
+      loadingBar.style.display = 'none';
+      var errBox = document.getElementById('unity-error');
+      document.getElementById('unity-error-msg').textContent =
+        '无法加载游戏脚本，请检查网络或刷新页面重试。（loader: ' + loaderUrl + '）';
+      errBox.style.display = 'block';
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
