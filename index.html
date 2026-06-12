@@ -276,18 +276,19 @@
       <div class="tutorial-card">
         <h2>🎮 怎么玩</h2>
         <ul>
-          <li>你是<strong>老鹰（红色）</strong></li>
-          <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或方向键移动</li>
-          <li><kbd>空格</kbd> 扑击——<strong>只有扑击中碰到小鸡才算抓到</strong>，贴着蹭不算</li>
-          <li>90 秒内抓住 3 只 → 老鹰赢</li>
-          <li>鸡群守到时间结束 → 鸡群赢</li>
+          <li>开局在主菜单选角色（鼠标点击或按 <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd>），AI 自动补位剩下的角色</li>
+          <li>🦅 <strong>老鹰</strong>：抓小鸡——<kbd>空格</kbd> 扑击，只有扑击中碰到才算抓到</li>
+          <li>🐔 <strong>母鸡</strong>：挡住老鹰——<kbd>空格</kbd> 开/收翅膀，张开挡得宽但走得慢</li>
+          <li>🐥 <strong>小鸡</strong>：活下来——你是队尾戴白帽的那只，<kbd>空格</kbd> 紧急蹲下 1 秒免抓</li>
+          <li>90 秒内老鹰抓满 3 只 → 老鹰赢；守到时间结束 → 鸡群赢</li>
         </ul>
       </div>
 
       <div class="tutorial-card">
         <h2>⌨️ 按键</h2>
-        <div class="key-row"><kbd>R</kbd> 重开一局</div>
-        <div class="key-row"><kbd>Tab</kbd> 打开调参面板</div>
+        <div class="key-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 方向键：移动</div>
+        <div class="key-row"><kbd>空格</kbd>：角色技能（扑击 / 开收翅膀 / 蹲下）</div>
+        <div class="key-row"><kbd>R</kbd> 重开一局 · <kbd>Tab</kbd> 调参面板</div>
         <p class="tip-note">
           💡 小提示：先点一下游戏画面再按键——浏览器需要键盘焦点才能接收输入。
         </p>
@@ -296,7 +297,7 @@
 
     <!-- 页脚 -->
     <footer class="site-footer">
-      版本 r7-202606120952 · Made with Unity
+      版本 r8-202606121437 · Made with Unity
     </footer>
 
   </div><!-- /.page-wrap -->
@@ -314,7 +315,7 @@
 
     // ── Unity 配置 ──
     // 版本号追加到所有资源 URL，每次发版缓存强制失效
-    var ver   = "r7-202606120952";
+    var ver   = "r8-202606121437";
     var build = "Build";
     var loaderUrl = build + "/WebGL.loader.js?v=" + ver;
 
