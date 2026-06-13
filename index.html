@@ -276,28 +276,30 @@
       <div class="tutorial-card">
         <h2>🎮 怎么玩</h2>
         <ul>
-          <li>开局在主菜单选角色（鼠标点击或按 <kbd>1</kbd> / <kbd>2</kbd> / <kbd>3</kbd>），AI 自动补位剩下的角色</li>
-          <li>🦅 <strong>老鹰</strong>：抓小鸡——<kbd>空格</kbd> 扑击，只有扑击中碰到才算抓到</li>
-          <li>🐔 <strong>母鸡</strong>：挡住老鹰——<kbd>空格</kbd> 开/收翅膀，张开挡得宽但走得慢</li>
-          <li>🐥 <strong>小鸡</strong>：活下来——你是队尾戴白帽的那只，<kbd>空格</kbd> 紧急蹲下 1 秒免抓</li>
-          <li>90 秒内老鹰抓满 3 只 → 老鹰赢；守到时间结束 → 鸡群赢</li>
+          <li>菜单里点蓝色 <strong>「物理派对 · 护崽大作战」</strong>开局。你是 <strong>🐔 母鸡</strong>，带着一串小鸡到处跑</li>
+          <li>脚底像抹了黄油，有惯性会打滑；<strong>急转弯</strong>会把小鸡甩飞出去（滚两圈自己跑回来）</li>
+          <li>🦅 <strong>老鹰</strong>在天上盘旋，<strong>蓄力变红</strong>后俯冲扑击：冲散鸡队、叼走落单的小鸡变成蛋（淘汰）</li>
+          <li>🛡️ 反制：老鹰俯冲那一下按 <kbd>空格</kbd> <strong>格挡撞击</strong>，把它反向撞飞 + 撞晕几秒</li>
+          <li>🎡 场上还有 <strong>摆锤 / 通风口 / 弹射陷阱</strong>，会把你和小鸡弹来弹去</li>
+          <li>撑满 <strong>3 分钟</strong>还有小鸡活着 → 母鸡赢；小鸡全被叼走 → 老鹰赢</li>
         </ul>
       </div>
 
       <div class="tutorial-card">
         <h2>⌨️ 按键</h2>
-        <div class="key-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 方向键：移动</div>
-        <div class="key-row"><kbd>空格</kbd>：角色技能（扑击 / 开收翅膀 / 蹲下）</div>
-        <div class="key-row"><kbd>R</kbd> 重开一局 · <kbd>Tab</kbd> 调参面板</div>
+        <div class="key-row"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 方向键：带着小鸡跑动</div>
+        <div class="key-row"><kbd>空格</kbd> / <kbd>J</kbd>：格挡撞击（撞晕俯冲的老鹰）</div>
+        <div class="key-row"><kbd>V</kbd> 切视角（俯视 / 第三人称）· <kbd>M</kbd> 静音 · <kbd>R</kbd> 重开</div>
         <p class="tip-note">
-          💡 小提示：先点一下游戏画面再按键——浏览器需要键盘焦点才能接收输入。
+          💡 小提示：先点一下游戏画面再按键——浏览器需要键盘焦点才能接收输入。<br>
+          （菜单底部还留着旧的「完整版 / 读招 / 甩链」三个原型，想看可以点。）
         </p>
       </div>
     </section>
 
     <!-- 页脚 -->
     <footer class="site-footer">
-      版本 r21party-202606131605 · Made with Unity
+      版本 r22party-202606131846 · Made with Unity
     </footer>
 
   </div><!-- /.page-wrap -->
@@ -315,7 +317,7 @@
 
     // ── Unity 配置 ──
     // 版本号追加到所有资源 URL，每次发版缓存强制失效
-    var ver   = "r21party-202606131605";
+    var ver   = "r22party-202606131846";
     var build = "Build";
     var loaderUrl = build + "/WebGL.loader.js?v=" + ver;
 
